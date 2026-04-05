@@ -244,13 +244,42 @@
     }
 
     function toggle(song) {
-      const c = audio();
-      c.resume();
 
-      if (active === song.title) {
-        stop();
-        return;
-      }
+  // 🔥 iOS Audio UNLOCK (entscheidend!)
+  const c = audio();
+
+  if (c.state === "suspended") {
+    c.resume();
+  }
+
+  // 👉 kleiner Trick: "silent click" zum Aktivieren
+  const o = c.createOscillator();
+  const g = c.createGain();
+  g.gain.value = 0.0001;
+  o.connect(g);
+  g.connect(c.destination);
+  o.start();
+  o.stop(c.currentTime + 0.01);
+
+  // 👉 jetzt erst echte Logik
+
+  if (active === song.title) {
+    stop();
+    return;
+  }
+
+  clearInterval(interval);
+  active = song.title;
+
+  currentSongEl.textContent = song.title;
+  currentBpmEl.textContent = song.bpm + " BPM";
+  render();
+
+  const ms = 60000 / song.bpm;
+
+  click();
+  interval = setInterval(click, ms);
+}
 
       clearInterval(interval);
       active = song.title;
