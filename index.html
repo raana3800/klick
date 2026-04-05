@@ -1,131 +1,290 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Once A Month - Bei Chéz Heinz</title>
-
-<style>
-body {
-  margin:0;
-  font-family:sans-serif;
-  background:#000;
-  color:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
-.app {
-  width:100%;
-  max-width:500px;
-  padding:20px;
-}
-h1 {
-  text-align:center;
-  font-size:28px;
-  margin-bottom:20px;
-}
-button {
-  width:100%;
-  height:100px;
-  margin-bottom:15px;
-  font-size:22px;
-  border-radius:20px;
-  border:none;
-  background:#222;
-  color:white;
-}
-button.active {
-  background:white;
-  color:black;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Once A Month - Bei Chéz Heinz</title>
+  <style>
+    :root {
+      --bg: #0b0b0f;
+      --text: #f5f5f7;
+      --muted: #9ca3af;
+      --active: #ffffff;
+      --active-text: #0b0b0f;
+      --line: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: radial-gradient(circle at top, #1a1a24 0%, #0b0b0f 50%, #060608 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom)) 14px;
+    }
+    .app {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .header {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 18px 18px 16px 18px;
+      backdrop-filter: blur(8px);
+    }
+    .title {
+      margin: 0;
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+    .sub {
+      margin: 6px 0 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .display {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      padding: 26px 18px 28px 18px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+    .light {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      margin: 0 auto 16px auto;
+      background: #505665;
+      box-shadow: 0 0 0 0 rgba(255,255,255,0.0);
+      transition: transform 0.08s ease, background 0.08s ease, box-shadow 0.08s ease;
+    }
+    .light.flash {
+      background: #ffffff;
+      transform: scale(1.22);
+      box-shadow: 0 0 22px 6px rgba(255,255,255,0.32);
+    }
+    .label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.24em;
+      margin-bottom: 10px;
+    }
+    .song-name {
+      font-size: 38px;
+      line-height: 1.02;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      min-height: 42px;
+    }
+    .bpm {
+      margin-top: 10px;
+      color: #d8dbe2;
+      font-size: 23px;
+      font-weight: 700;
+    }
+    .buttons {
+      display: grid;
+      gap: 14px;
+    }
+    button {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border-radius: 30px;
+      min-height: 100px;
+      width: 100%;
+      font-size: 23px;
+      font-weight: 900;
+      cursor: pointer;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+    }
+    button:active { transform: scale(0.99); }
+    button.active {
+      background: var(--active);
+      color: var(--active-text);
+      border-color: rgba(255,255,255,0.4);
+    }
+    .left { display: flex; flex-direction: column; gap: 7px; }
+    .state {
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      opacity: 0.7;
+    }
+    .name {
+      font-size: 28px;
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+    }
+    .tempo {
+      font-size: 26px;
+      font-weight: 900;
+      white-space: nowrap;
+      margin-left: 16px;
+    }
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      padding: 2px 8px 10px 8px;
+      line-height: 1.4;
+    }
+    @media (max-width: 420px) {
+      .title { font-size: 30px; }
+      .song-name { font-size: 34px; min-height: 38px; }
+      .bpm { font-size: 21px; }
+      button { min-height: 112px; font-size: 20px; border-radius: 28px; }
+      .name { font-size: 26px; }
+      .tempo { font-size: 24px; }
+    }
+  </style>
 </head>
-
 <body>
-<div class="app">
-  <h1>Once A Month - Bei Chéz Heinz</h1>
-  <div id="buttons"></div>
-</div>
+  <main class="app">
+    <section class="header">
+      <h1 class="title">Once A Month - Bei Chéz Heinz</h1>
+      <p class="sub">Große Buttons fürs Handy. Antippen = Start. Nochmal antippen = Stop.</p>
+    </section>
 
-<script>
-const songs = [
-  { title:"James Blunt", bpm:105 },
-  { title:"Paramore", bpm:70 },
-  { title:"Bruno Mars", bpm:150 }
-];
+    <section class="display">
+      <div id="light" class="light"></div>
+      <div class="label">Aktiv</div>
+      <div id="currentSong" class="song-name">–</div>
+      <div id="currentBpm" class="bpm">Noch nicht gestartet</div>
+    </section>
 
-let ctx=null;
-let interval=null;
-let active=null;
+    <section id="buttons" class="buttons"></section>
 
-function audio(){
-  if(!ctx){
-    ctx=new (window.AudioContext||window.webkitAudioContext)();
-  }
-  return ctx;
-}
+    <div class="footer">GitHub Pages: genau diese Datei als index.html ins Repo legen.</div>
+  </main>
 
-function click(){
-  const c=audio();
-  const now=c.currentTime;
+  <script>
+    const songs = [
+      { title: "James Blunt", bpm: 105 },
+      { title: "Paramore", bpm: 70 },
+      { title: "Bruno Mars", bpm: 150 }
+    ];
 
-  const o=c.createOscillator();
-  const g=c.createGain();
+    let ctx = null;
+    let interval = null;
+    let active = null;
 
-  o.type="square";
-  o.frequency.value=1800;
+    const currentSongEl = document.getElementById("currentSong");
+    const currentBpmEl = document.getElementById("currentBpm");
+    const lightEl = document.getElementById("light");
+    const buttonsEl = document.getElementById("buttons");
 
-  g.gain.setValueAtTime(0.0001,now);
-  g.gain.exponentialRampToValueAtTime(0.25,now+0.002);
-  g.gain.exponentialRampToValueAtTime(0.0001,now+0.05);
+    function audio() {
+      if (!ctx) {
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (ctx.state === "suspended") {
+        ctx.resume();
+      }
+      return ctx;
+    }
 
-  o.connect(g);
-  g.connect(c.destination);
+    function flash() {
+      lightEl.classList.add("flash");
+      window.setTimeout(() => lightEl.classList.remove("flash"), 90);
+    }
 
-  o.start(now);
-  o.stop(now+0.055);
-}
+    function click() {
+      const c = audio();
+      const now = c.currentTime;
 
-function stop(){
-  clearInterval(interval);
-  interval=null;
-  active=null;
-  render();
-}
+      const o = c.createOscillator();
+      const g = c.createGain();
 
-function toggle(song){
-  if(active===song.title){
-    stop();
-    return;
-  }
+      o.type = "square";
+      o.frequency.value = 1800;
 
-  clearInterval(interval);
-  active=song.title;
-  render();
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.25, now + 0.002);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
 
-  const ms=60000/song.bpm;
-  click();
-  interval=setInterval(click,ms);
-}
+      o.connect(g);
+      g.connect(c.destination);
 
-function render(){
-  const el=document.getElementById("buttons");
-  el.innerHTML="";
+      o.start(now);
+      o.stop(now + 0.055);
 
-  songs.forEach(s=>{
-    const b=document.createElement("button");
-    if(active===s.title) b.classList.add("active");
+      flash();
+    }
 
-    b.innerText = (active===s.title?"STOP ":"▶ ") + s.title + " ("+s.bpm+")";
+    function stop() {
+      clearInterval(interval);
+      interval = null;
+      active = null;
+      currentSongEl.textContent = "–";
+      currentBpmEl.textContent = "Noch nicht gestartet";
+      render();
+    }
 
-    b.onclick=()=>toggle(s);
-    el.appendChild(b);
-  });
-}
+    function toggle(song) {
+      const c = audio();
+      c.resume();
 
-render();
-</script>
+      if (active === song.title) {
+        stop();
+        return;
+      }
+
+      clearInterval(interval);
+      active = song.title;
+      currentSongEl.textContent = song.title;
+      currentBpmEl.textContent = song.bpm + " BPM";
+      render();
+
+      const ms = 60000 / song.bpm;
+      click();
+      interval = setInterval(click, ms);
+    }
+
+    function render() {
+      buttonsEl.innerHTML = "";
+
+      songs.forEach(song => {
+        const button = document.createElement("button");
+        const isActive = active === song.title;
+        if (isActive) button.classList.add("active");
+
+        button.innerHTML = `
+          <div class="left">
+            <div class="state">${isActive ? "Stop" : "Start"}</div>
+            <div class="name">${song.title}</div>
+          </div>
+          <div class="tempo">${song.bpm}</div>
+        `;
+
+        button.addEventListener("click", () => toggle(song));
+        buttonsEl.appendChild(button);
+      });
+    }
+
+    render();
+  </script>
 </body>
 </html>
