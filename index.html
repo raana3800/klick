@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Once A Month - Bei Chéz Heinz</title>
+
+<style>
+body {
+  margin:0;
+  font-family:sans-serif;
+  background:#000;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.app {
+  width:100%;
+  max-width:500px;
+  padding:20px;
+}
+h1 {
+  text-align:center;
+  font-size:28px;
+  margin-bottom:20px;
+}
+button {
+  width:100%;
+  height:100px;
+  margin-bottom:15px;
+  font-size:22px;
+  border-radius:20px;
+  border:none;
+  background:#222;
+  color:white;
+}
+button.active {
+  background:white;
+  color:black;
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+  <h1>Once A Month - Bei Chéz Heinz</h1>
+  <div id="buttons"></div>
+</div>
+
+<script>
+const songs = [
+  { title:"James Blunt", bpm:105 },
+  { title:"Paramore", bpm:70 },
+  { title:"Bruno Mars", bpm:150 }
+];
+
+let ctx=null;
+let interval=null;
+let active=null;
+
+function audio(){
+  if(!ctx){
+    ctx=new (window.AudioContext||window.webkitAudioContext)();
+  }
+  return ctx;
+}
+
+function click(){
+  const c=audio();
+  const now=c.currentTime;
+
+  const o=c.createOscillator();
+  const g=c.createGain();
+
+  o.type="square";
+  o.frequency.value=1800;
+
+  g.gain.setValueAtTime(0.0001,now);
+  g.gain.exponentialRampToValueAtTime(0.25,now+0.002);
+  g.gain.exponentialRampToValueAtTime(0.0001,now+0.05);
+
+  o.connect(g);
+  g.connect(c.destination);
+
+  o.start(now);
+  o.stop(now+0.055);
+}
+
+function stop(){
+  clearInterval(interval);
+  interval=null;
+  active=null;
+  render();
+}
+
+function toggle(song){
+  if(active===song.title){
+    stop();
+    return;
+  }
+
+  clearInterval(interval);
+  active=song.title;
+  render();
+
+  const ms=60000/song.bpm;
+  click();
+  interval=setInterval(click,ms);
+}
+
+function render(){
+  const el=document.getElementById("buttons");
+  el.innerHTML="";
+
+  songs.forEach(s=>{
+    const b=document.createElement("button");
+    if(active===s.title) b.classList.add("active");
+
+    b.innerText = (active===s.title?"STOP ":"▶ ") + s.title + " ("+s.bpm+")";
+
+    b.onclick=()=>toggle(s);
+    el.appendChild(b);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
